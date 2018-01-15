@@ -44,7 +44,7 @@ $ sudo su
   flush_interval 1s
   append true
   <format>
-    @type out_file
+    @type json
   </format>
 </match>
 EOF
@@ -87,11 +87,6 @@ fluentbit configuration:
     Systemd_Filter  SYSLOG_IDENTIFIER=foobar
 
 [OUTPUT]
-    Name file
-    Match *
-    Path /tmp/test-output.txt
-
-[OUTPUT]
     Name http
     Match *
     Host server-log
@@ -119,5 +114,12 @@ Read this message on `server-log`:
 $ vagrant ssh server-log
 $ sudo su
 # tail -f /tmp/foobar.log.20180112.log
-2018-01-12T09:52:48+00:00	debug.test	{"date":1515750767.532173,"PRIORITY":"6","_UID":"0","_GID":"0","_CAP_EFFECTIVE":"3fffffffff","_SYSTEMD_SLICE":"-.slice","_BOOT_ID":"f4a3b91f81aa40faa2d2fdade88f4ea7","_MACHINE_ID":"73eeabe4d35f4c54af1cd88ffe22e352","_AUDIT_LOGINUID":"1000","_TRANSPORT":"stdout","_SYSTEMD_CGROUP":"/","_HOSTNAME":"client-log","_AUDIT_SESSION":"3","SYSLOG_IDENTIFIER":"foobar","MESSAGE":"hello","_PID":"2582","_COMM":"cat"}
+{"date":1515750767.532173,"PRIORITY":"6","_UID":"0","_GID":"0","_CAP_EFFECTIVE":"3fffffffff","_SYSTEMD_SLICE":"-.slice","_BOOT_ID":"f4a3b91f81aa40faa2d2fdade88f4ea7","_MACHINE_ID":"73eeabe4d35f4c54af1cd88ffe22e352","_AUDIT_LOGINUID":"1000","_TRANSPORT":"stdout","_SYSTEMD_CGROUP":"/","_HOSTNAME":"client-log","_AUDIT_SESSION":"3","SYSLOG_IDENTIFIER":"foobar","MESSAGE":"hello","_PID":"2582","_COMM":"cat"}
+```
+
+Format output with [jq](https://stedolan.github.io/jq/):
+
+```
+$ cat /tmp/foobar.log.20180115.log | jq -r ". | [(.date | todate), .MESSAGE] | @tsv"
+2018-01-15T09:54:51Z	hello
 ```
