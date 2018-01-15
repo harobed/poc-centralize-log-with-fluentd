@@ -120,6 +120,7 @@ $ sudo su
 Format output with [jq](https://stedolan.github.io/jq/):
 
 ```
-$ cat /tmp/foobar.log.20180115.log | jq -r ". | [(.date | todate), .MESSAGE] | @tsv"
+# apt-get install -y jq 
+# cat /tmp/foobar.log.20180115.log | jq -r ". | [(.date | todate), .MESSAGE] | @tsv"
 2018-01-15T09:54:51Z	hello
 ```
